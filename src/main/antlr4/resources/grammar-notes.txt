@@ -1,0 +1,387 @@
+https://www.w3.org/TR/rdf-syntax-grammar/#section-Infoset-Grammar
+
+
+7. RDF/XML Grammar
+7.1 Grammar summary
+7.2.2 coreSyntaxTerms 	rdf:RDF | rdf:ID | rdf:about | rdf:parseType | rdf:resource | rdf:nodeID | rdf:datatype
+7.2.3 syntaxTerms 	coreSyntaxTerms | rdf:Description | rdf:li
+7.2.4 oldTerms 	rdf:aboutEach | rdf:aboutEachPrefix | rdf:bagID
+7.2.5 nodeElementURIs 	anyURI - ( coreSyntaxTerms | rdf:li | oldTerms )
+7.2.6 propertyElementURIs 	anyURI - ( coreSyntaxTerms | rdf:Description | oldTerms )
+7.2.7 propertyAttributeURIs 	anyURI - ( coreSyntaxTerms | rdf:Description | rdf:li | oldTerms )
+7.2.8 doc 	root(document-element == RDF, children == list(RDF))
+7.2.9 RDF 	start-element(URI == rdf:RDF, attributes == set())
+nodeElementList
+end-element()
+7.2.10 nodeElementList 	ws* (nodeElement ws* )*
+7.2.11 nodeElement 	start-element(URI == nodeElementURIs
+    attributes == set((idAttr | nodeIdAttr | aboutAttr )?, propertyAttr*))
+propertyEltList
+end-element()
+7.2.12 ws 	A text event matching white space defined by XML [XML10] definition White Space Rule [3] S in section Common Syntactic Constructs
+7.2.13 propertyEltList 	ws* (propertyElt ws* ) *
+7.2.14 propertyElt 	resourcePropertyElt | literalPropertyElt | parseTypeLiteralPropertyElt | parseTypeResourcePropertyElt | parseTypeCollectionPropertyElt | parseTypeOtherPropertyElt | emptyPropertyElt
+7.2.15 resourcePropertyElt 	start-element(URI == propertyElementURIs ), attributes == set(idAttr?))
+ws* nodeElement ws*
+end-element()
+7.2.16 literalPropertyElt 	start-element(URI == propertyElementURIs ), attributes == set(idAttr?, datatypeAttr?))
+text()
+end-element()
+7.2.17 parseTypeLiteralPropertyElt 	start-element(URI == propertyElementURIs ), attributes == set(idAttr?, parseLiteral))
+literal
+end-element()
+7.2.18 parseTypeResourcePropertyElt 	start-element(URI == propertyElementURIs ), attributes == set(idAttr?, parseResource))
+propertyEltList
+end-element()
+7.2.19 parseTypeCollectionPropertyElt 	start-element(URI == propertyElementURIs ), attributes == set(idAttr?, parseCollection))
+nodeElementList
+end-element()
+7.2.20 parseTypeOtherPropertyElt 	start-element(URI == propertyElementURIs ), attributes == set(idAttr?, parseOther))
+propertyEltList
+end-element()
+7.2.21 emptyPropertyElt 	start-element(URI == propertyElementURIs ), attributes == set(idAttr?, ( resourceAttr | nodeIdAttr | datatypeAttr )?, propertyAttr*))
+end-element()
+7.2.22 idAttr 	attribute(URI == rdf:ID, string-value == rdf-id)
+7.2.23 nodeIdAttr 	attribute(URI == rdf:nodeID, string-value == rdf-id)
+7.2.24 aboutAttr 	attribute(URI == rdf:about, string-value == URI-reference)
+7.2.25 propertyAttr 	attribute(URI == propertyAttributeURIs, string-value == anyString)
+7.2.26 resourceAttr 	attribute(URI == rdf:resource, string-value == URI-reference)
+7.2.27 datatypeAttr 	attribute(URI == rdf:datatype, string-value == URI-reference)
+7.2.28 parseLiteral 	attribute(URI == rdf:parseType, string-value == "Literal")
+7.2.29 parseResource 	attribute(URI == rdf:parseType, string-value == "Resource")
+7.2.30 parseCollection 	attribute(URI == rdf:parseType, string-value == "Collection")
+7.2.31 parseOther 	attribute(URI == rdf:parseType, string-value == anyString - ("Resource" | "Literal" | "Collection") )
+7.2.32 URI-reference 	An IRI.
+7.2.33 literal 	Any XML element content that is allowed according to [XML10] definition Content of Elements Rule [43] content. in section 3.1 Start-Tags, End-Tags, and Empty-Element Tags
+7.2.34 rdf-id 	An attribute ·string-value· matching any legal [XML-NAMES] token NCName
+7.2 Grammar Productions
+7.2.1 Grammar start
+
+If the RDF/XML is a standalone XML document (identified by presentation as an application/rdf+xml RDF MIME type object, or by some other means) then the grammar may start with production doc or production nodeElement.
+
+If the content is known to be RDF/XML by context, such as when RDF/XML is embedded inside other XML content, then the grammar can either start at Element Event  RDF (only when an element is legal at that point in the XML) or at production nodeElementList (only when element content is legal, since this is a list of elements). For such embedded RDF/XML, the ·base-uri· value on the outermost element must be initialized from the containing XML since no Root Event  will be available. Note that if such embedding occurs, the grammar may be entered several times but no state is expected to be preserved.
+7.2.2 Production coreSyntaxTerms
+
+rdf:RDF | rdf:ID | rdf:about | rdf:parseType | rdf:resource | rdf:nodeID | rdf:datatype
+
+A subset of the syntax terms from the RDF vocabulary in section 5.1 which are used in RDF/XML.
+7.2.3 Production syntaxTerms
+
+coreSyntaxTerms | rdf:Description | rdf:li
+
+All the syntax terms from the RDF vocabulary in section 5.1 which are used in RDF/XML.
+7.2.4 Production oldTerms
+
+rdf:aboutEach | rdf:aboutEachPrefix | rdf:bagID
+
+These are the names from the RDF vocabulary that have been withdrawn from the language. See the resolutions of Issue rdfms-aboutEach-on-object, Issue rdfms-abouteachprefix and Last Call Issue timbl-01 for further information.
+Note
+
+Error Test: Indicated by error001.rdf and error002.rdf
+7.2.5 Production nodeElementURIs
+
+anyURI - ( coreSyntaxTerms | rdf:li | oldTerms )
+
+The IRIs that are allowed on node elements.
+7.2.6 Production propertyElementURIs
+
+anyURI - ( coreSyntaxTerms | rdf:Description | oldTerms )
+
+The URIs that are allowed on property elements.
+7.2.7 Production propertyAttributeURIs
+
+anyURI - ( coreSyntaxTerms | rdf:Description | rdf:li | oldTerms )
+
+The IRIs that are allowed on property attributes.
+7.2.8 Production doc
+
+root(document-element == RDF,
+    children == list(RDF))
+7.2.9 Production RDF
+
+start-element(URI == rdf:RDF,
+    attributes == set())
+nodeElementList
+end-element()
+7.2.10 Production nodeElementList
+
+ws* (nodeElement ws* )*
+7.2.11 Production nodeElement
+
+start-element(URI == nodeElementURIs
+    attributes == set((idAttr | nodeIdAttr | aboutAttr )?, propertyAttr*))
+propertyEltList
+end-element()
+
+For node element e, the processing of some of the attributes has to be done before other work such as dealing with children events or other attributes. These can be processed in any order:
+
+    If there is an attribute a with a.URI == rdf:ID, then e.subject := uri(identifier := resolve(e, concat("#", a.string-value))).
+    If there is an attribute a with a.URI == rdf:nodeID, then e.subject := bnodeid(identifier:=a.string-value).
+    If there is an attribute a with a.URI == rdf:about then e.subject := uri(identifier := resolve(e, a.string-value)).
+
+If e.subject is empty, then e.subject := bnodeid(identifier := generated-blank-node-id()).
+
+The following can then be performed in any order:
+
+    If e.URI != rdf:Description then the following statement is added to the graph:
+
+    e.subject.string-value <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> e.URI-string-value .
+    If there is an attribute a in propertyAttr with a.URI == rdf:type then u:=uri(identifier:=resolve(e, a.string-value)) and the following triple is added to the graph:
+
+    e.subject.string-value <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> u.string-value .
+    For each attribute a matching propertyAttr (and not rdf:type), the Unicode string a.string-value SHOULD be in Normal Form C [NFC], o := literal(literal-value := a.string-value, literal-language := e.language) and the following statement is added to the graph:
+
+    e.subject.string-value a.URI-string-value o.string-value .
+    Handle the propertyEltList children events in document order.
+
+7.2.12 Production ws
+
+A text event matching white space defined by [XML10] definition White Space Rule [3] S in section Common Syntactic Constructs
+7.2.13 Production propertyEltList
+
+ws* (propertyElt ws* ) *
+7.2.14 Production propertyElt
+
+resourcePropertyElt | literalPropertyElt | parseTypeLiteralPropertyElt | parseTypeResourcePropertyElt | parseTypeCollectionPropertyElt | parseTypeOtherPropertyElt | emptyPropertyElt
+
+If element e has e.URI = rdf:li then apply the list expansion rules on element e.parent in section 7.4 to give a new URI u and e.URI := u.
+
+The action of this production must be done before the actions of any sub-matches (resourcePropertyElt ... emptyPropertyElt). Alternatively the result must be equivalent to as if it this action was performed first, such as performing as the first action of all of the sub-matches.
+7.2.15 Production resourcePropertyElt
+
+start-element(URI == propertyElementURIs ),
+    attributes == set(idAttr?))
+ws* nodeElement ws*
+end-element()
+
+For element e, and the single contained nodeElement n, first n must be processed using production nodeElement. Then the following statement is added to the graph:
+
+   e.parent.subject.string-value e.URI-string-value n.subject.string-value .
+
+If the rdf:ID attribute a is given, the above statement is reified with i := uri(identifier := resolve(e, concat("#", a.string-value))) using the reification rules in section 7.3 and e.subject := i
+7.2.16 Production literalPropertyElt
+
+start-element(URI == propertyElementURIs ),
+    attributes == set(idAttr?, datatypeAttr?))
+text()
+end-element()
+
+Note that the empty literal case is defined in production emptyPropertyElt.
+
+For element e, and the text event t. The Unicode string t.string-value SHOULD be in Normal Form C [NFC]. If the rdf:datatype attribute d is given then o := typed-literal(literal-value := t.string-value, literal-datatype := d.string-value) otherwise o := literal(literal-value := t.string-value, literal-language := e.language) and the following statement is added to the graph:
+
+e.parent.subject.string-value e.URI-string-value o.string-value .
+
+If the rdf:ID attribute a is given, the above statement is reified with i := uri(identifier := resolve(e, concat("#", a.string-value))) using the reification rules in section 7.3 and e.subject := i.
+7.2.17 Production parseTypeLiteralPropertyElt
+
+This section is non-normative.
+
+start-element(URI == propertyElementURIs ),
+    attributes == set(idAttr?, parseLiteral))
+literal
+end-element()
+
+For element e and the literal l that is the rdf:parseType="Literal" content. l is not transformed by the syntax data model mapping into events (as noted in section 6 Syntax Data Model) but remains an XML Infoset of XML Information items.
+
+l is transformed into the lexical form of an XML literal in the RDF graph x (a Unicode string) by the following algorithm. This does not mandate any implementation method — any other method that gives the same result may be used.
+
+    Use l to construct an XPath sequence [XPATH-DATAMODEL-30].
+    Apply http://www.w3.org/TR/xpath-functions-30/#func-serialize [XPATH-FUNCTIONS-30] to this sequence to give an xsd:string x.
+    The Unicode string x is used as the lexical form of l
+    This Unicode string x SHOULD be in NFC Normal Form C [NFC]
+
+Then o := typed-literal(literal-value := x, literal-datatype := http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral ) and the following statement is added to the graph:
+
+e.parent.subject.string-value e.URI-string-value o.string-value .
+Note
+
+Test: Empty literal case indicated by test009.rdf and test009.nt
+
+If the rdf:ID attribute a is given, the above statement is reified with i := uri(identifier := resolve(e, concat("#", a.string-value))) using the reification rules in section 7.3 and e.subject := i.
+7.2.18 Production parseTypeResourcePropertyElt
+
+start-element(URI == propertyElementURIs ),
+    attributes == set(idAttr?, parseResource))
+propertyEltList
+end-element()
+
+For element e with possibly empty element content c.
+
+n := bnodeid(identifier := generated-blank-node-id()).
+
+Add the following statement to the graph:
+
+e.parent.subject.string-value e.URI-string-value n.string-value .
+Note
+
+Test: Indicated by test004.rdf and test004.nt
+
+If the rdf:ID attribute a is given, the statement above is reified with i := uri(identifier := resolve(e, concat("#", a.string-value))) using the reification rules in section 7.3 and e.subject := i.
+
+If the element content c is not empty, then use event n to create a new sequence of events as follows:
+
+start-element(URI := rdf:Description,
+    subject := n,
+    attributes := set())
+c
+end-element()
+
+Then process the resulting sequence using production nodeElement.
+7.2.19 Production parseTypeCollectionPropertyElt
+
+start-element(URI == propertyElementURIs ),
+    attributes == set(idAttr?, parseCollection))
+nodeElementList
+end-element()
+
+For element event e with possibly empty nodeElementList l. Set s:=list().
+
+For each element event f in l, n := bnodeid(identifier := generated-blank-node-id()) and append n to s to give a sequence of events.
+
+If s is not empty, n is the first event identifier in s and the following statement is added to the graph:
+
+e.parent.subject.string-value e.URI-string-value n.string-value .
+
+otherwise the following statement is added to the graph:
+
+e.parent.subject.string-value e.URI-string-value <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+
+If the rdf:ID attribute a is given, either of the the above statements is reified with i := uri(identifier := resolve(e, concat("#", a.string-value))) using the reification rules in section 7.3.
+
+If s is empty, no further work is performed.
+
+For each event n in s and the corresponding element event f in l, the following statement is added to the graph:
+
+n.string-value <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> f.string-value .
+
+For each consecutive and overlapping pair of events (n, o) in s, the following statement is added to the graph:
+
+n.string-value <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> o.string-value .
+
+If s is not empty, n is the last event identifier in s, the following statement is added to the graph:
+
+n.string-value <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+7.2.20 Production parseTypeOtherPropertyElt
+
+start-element(URI == propertyElementURIs ),
+    attributes == set(idAttr?, parseOther))
+propertyEltList
+end-element()
+
+All rdf:parseType attribute values other than the strings "Resource", "Literal" or "Collection" are treated as if the value was "Literal". This production matches and acts as if production parseTypeLiteralPropertyElt was matched. No extra triples are generated for other rdf:parseType values.
+7.2.21 Production emptyPropertyElt
+
+start-element(URI == propertyElementURIs ),
+    attributes == set(idAttr?, ( resourceAttr | nodeIdAttr | datatypeAttr )?, propertyAttr*))
+end-element()
+
+    If there are no attributes or only the optional rdf:ID attribute i then o := literal(literal-value:="", literal-language := e.language) and the following statement is added to the graph:
+
+    e.parent.subject.string-value e.URI-string-value o.string-value .
+
+    and then if i is given, the above statement is reified with uri(identifier := resolve(e, concat("#", i.string-value))) using the reification rules in section 7.3.
+    Note
+
+    Test: Indicated by test002.rdf and test002.nt
+    Note
+
+    Test: Indicated by test005.rdf and test005.nt
+
+    Otherwise
+        If rdf:resource attribute i is present, then r := uri(identifier := resolve(e, i.string-value))
+        If rdf:nodeID attribute i is present, then r := bnodeid(identifier := i.string-value)
+        If neither, r := bnodeid(identifier := generated-blank-node-id())
+
+    The following are done in any order:
+
+        For all propertyAttr attributes a (in any order)
+
+            If a.URI == rdf:type then u:=uri(identifier:=resolve(e, a.string-value)) and the following triple is added to the graph:
+
+            r.string-value <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> u.string-value .
+
+            Otherwise Unicode string a.string-value SHOULD be in Normal Form C [NFC], o := literal(literal-value := a.string-value, literal-language := e.language) and the following statement is added to the graph:
+
+            r.string-value a.URI-string-value o.string-value .
+        Note
+
+        Test: Indicated by test013.rdf and test013.nt
+        Note
+
+        Test: Indicated by test014.rdf and test014.nt
+
+        Add the following statement to the graph:
+
+        e.parent.subject.string-value e.URI-string-value r.string-value .
+
+        and then if rdf:ID attribute i is given, the above statement is reified with uri(identifier := resolve(e, concat("#", i.string-value))) using the reification rules in section 7.3.
+
+7.2.22 Production idAttr
+
+attribute(URI == rdf:ID,
+    string-value == rdf-id)
+
+Constraint:: constraint-id applies to the values of rdf:ID attributes
+7.2.23 Production nodeIdAttr
+
+attribute(URI == rdf:nodeID,
+    string-value == rdf-id)
+7.2.24 Production aboutAttr
+
+attribute(URI == rdf:about,
+    string-value == URI-reference)
+7.2.25 Production propertyAttr
+
+attribute(URI == propertyAttributeURIs,
+    string-value == anyString)
+7.2.26 Production resourceAttr
+
+attribute(URI == rdf:resource,
+    string-value == URI-reference)
+7.2.27 Production datatypeAttr
+
+attribute(URI == rdf:datatype,
+    string-value == URI-reference)
+7.2.28 Production parseLiteral
+
+attribute(URI == rdf:parseType,
+    string-value == "Literal")
+7.2.29 Production parseResource
+
+attribute(URI == rdf:parseType,
+    string-value == "Resource")
+7.2.30 Production parseCollection
+
+attribute(URI == rdf:parseType,
+    string-value == "Collection")
+7.2.31 Production parseOther
+
+attribute(URI == rdf:parseType,
+    string-value == anyString - ("Resource" | "Literal" | "Collection") )
+7.2.32 Production IRI
+
+An IRI.
+7.2.33 Production literal
+
+Any XML element content that is allowed according to XML definition Content of Elements Rule [43] content. in section 3.1 Start-Tags, End-Tags, and Empty-Element Tags
+
+The string-value for the resulting event is discussed in section 7.2.17.
+7.2.34 Production rdf-id
+
+An attribute ·string-value· matching any legal [XML-NAMES] token NCName
+7.3 Reification Rules
+
+For the given IRI event r and the statement with terms s, p and o corresponding to the N-Triples:
+
+s p o .
+
+add the following statements to the graph:
+
+r.string-value <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject> s .
+r.string-value <http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate> p .
+r.string-value <http://www.w3.org/1999/02/22-rdf-syntax-ns#object> o .
+r.string-value <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
+7.4 List Expansion Rules
+
+For the given element e, create a new IRI u := concat("http://www.w3.org/1999/02/22-rdf-syntax-ns#_", e.li-counter), increment the e.li-counter property by 1 and return u.
